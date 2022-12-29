@@ -32,23 +32,24 @@ public class OpenAIClient {
 
     public String getSqlStatement(String query) {
         String prompt = dbSchemaDescription + query;
-        log.info(prompt);
         openAiRequest.setPrompt(prompt);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OpenAiRequest> request = new HttpEntity<>(openAiRequest, headers);
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey);
         ResponseEntity<OpenAiResponse> response = restTemplate.exchange(openAIUrl, HttpMethod.POST, request, OpenAiResponse.class);
-        log.info(response.getBody());
-        String rawResponse = response.getBody().getChoices().get(0).getText();
+        String rawResponse;
+        if(response.getBody() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No response from OpenAI");
+        } else {
+            rawResponse = response.getBody().getChoices().get(0).getText();
+        }
         return cleanResult(rawResponse);
     }
 
     private String cleanResult(String result) {
         result = result.toLowerCase();
-        log.info(result);
         int selectIndex = result.indexOf("select");
-        log.info(result.indexOf("select"));
         if (selectIndex == -1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error! Invalid SQL statement");
         }

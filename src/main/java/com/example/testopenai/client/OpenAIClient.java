@@ -1,16 +1,18 @@
 package com.example.testopenai.client;
 
 import com.example.testopenai.model.dto.OpenAiRequest;
+import com.example.testopenai.model.dto.OpenAiResponse;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
+
 
 @Component
+@Log4j2
 public class OpenAIClient {
 
     @Value("${apiKey}")
@@ -19,32 +21,38 @@ public class OpenAIClient {
     @Value("${openAIUrl}")
     private String openAIUrl;
 
+    @Value("${dbSchemaDescription}")
+    private String dbSchemaDescription;
+
     @Autowired
     private RestTemplate restTemplate;
 
-    public String getSQL() {
+    @Autowired
+    private OpenAiRequest openAiRequest;
 
-        String prompt = "### MySql tables, with their properties:\n" +
-                "#\n" +
-                "# Item(id, name, price, supplier_id)\n" +
-                "# Supplier(id, company_name, category_id)\n" +
-                "# Category(id, name)\n" +
-                "#\n" +
-                "### A query to list the names of the items in the category \"Hardware\" that costs less than two hundred dollars";
-
-        OpenAiRequest openAiRequest = new OpenAiRequest();
-        openAiRequest.setModel("code-davinci-002");
+    public String getSqlStatement(String query) {
+        String prompt = dbSchemaDescription + query;
+        log.info(prompt);
         openAiRequest.setPrompt(prompt);
-        openAiRequest.setMax_tokens(256);
-        openAiRequest.setTemperature(0);
-        openAiRequest.setTop_p(1);
-        openAiRequest.setFrequency_penalty(0);
-        openAiRequest.setPresence_penalty(0);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OpenAiRequest> request = new HttpEntity<>(openAiRequest, headers);
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey);
-        return restTemplate.exchange(openAIUrl, HttpMethod.POST, request, String.class).getBody();
+        ResponseEntity<OpenAiResponse> response = restTemplate.exchange(openAIUrl, HttpMethod.POST, request, OpenAiResponse.class);
+        log.info(response.getBody());
+        String rawResponse = response.getBody().getChoices().get(0).getText();
+        return cleanResult(rawResponse);
+    }
+
+    private String cleanResult(String result) {
+        result = result.toLowerCase();
+        log.info(result);
+        int selectIndex = result.indexOf("select");
+        log.info(result.indexOf("select"));
+        if (selectIndex == -1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error! Invalid SQL statement");
+        }
+        return result.substring(selectIndex);
     }
 
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,4 +17,5 @@ public class OpenAiRequest {
     private Integer top_p;
     private Integer frequency_penalty;
     private Integer presence_penalty;
+    private List<String> stop;
 }

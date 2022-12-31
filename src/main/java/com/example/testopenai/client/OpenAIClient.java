@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 
 @Component
 @Log4j2
@@ -27,12 +29,11 @@ public class OpenAIClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    private OpenAiRequest openAiRequest;
 
-    public String getSqlStatement(String query) {
-        String prompt = dbSchemaDescription + query;
+    public String getSqlStatement(OpenAiRequest openAiRequest) {
+        String prompt = dbSchemaDescription + openAiRequest.getPrompt();
         openAiRequest.setPrompt(prompt);
+        openAiRequest.setStop(List.of("#", ";"));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OpenAiRequest> request = new HttpEntity<>(openAiRequest, headers);

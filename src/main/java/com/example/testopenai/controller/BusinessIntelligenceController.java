@@ -1,5 +1,7 @@
 package com.example.testopenai.controller;
 
+import com.example.testopenai.model.dto.CustomResponse;
+import com.example.testopenai.model.dto.OpenAiRequest;
 import com.example.testopenai.service.BusinessIntelligenceService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +23,11 @@ public class BusinessIntelligenceController {
     BusinessIntelligenceService service;
 
     @PostMapping("/query-raw")
-    public ResponseEntity<List<Map<String, Object>>> queryRaw(@RequestBody String query) {
-        log.info("Inizio chiamata queryRaw - query: " + query);
-        List<Map<String, Object>> resultSet = service.getResultSetFromSqlStatement(query);
+    public ResponseEntity<CustomResponse> queryRaw(@RequestBody OpenAiRequest openAiRequest) {
+        log.info("Inizio chiamata queryRaw - query: " + openAiRequest.getPrompt());
+        CustomResponse customResponse = service.getResultSetFromSqlStatement(openAiRequest);
         log.info("Fine chiamata queryRaw");
-        return ResponseEntity.ok(resultSet);
+        return ResponseEntity.ok(customResponse);
     }
 
 }

@@ -31,6 +31,7 @@ public class OpenAIClient {
 
 
     public String getSqlStatement(OpenAiRequest openAiRequest) {
+        log.info("Processing OpenAiRequest: {}", openAiRequest);
         String prompt = dbSchemaDescription + openAiRequest.getPrompt();
         openAiRequest.setPrompt(prompt);
         openAiRequest.setStop(List.of("#", ";"));
@@ -43,6 +44,7 @@ public class OpenAIClient {
         if(response.getBody() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No response from OpenAI");
         } else {
+            log.info("Received OpenAiResponse: {}", response.getBody());
             rawResponse = response.getBody().getChoices().get(0).getText();
         }
         return cleanResult(rawResponse);

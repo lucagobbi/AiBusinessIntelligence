@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
@@ -18,7 +20,7 @@ public class BusinessIntelligenceController {
     BusinessIntelligenceServiceImpl service;
 
     @PostMapping("/query-raw")
-    public ResponseEntity<CustomResponse> queryRaw(@RequestBody OpenAiRequest openAiRequest) {
+    public ResponseEntity<CustomResponse> queryRaw(@RequestBody OpenAiRequest openAiRequest) throws IOException {
         log.info("Inizio chiamata queryRaw - query: " + openAiRequest.getPrompt());
         CustomResponse customResponse = service.getResultSetFromSqlStatement(openAiRequest);
         log.info("Fine chiamata queryRaw");

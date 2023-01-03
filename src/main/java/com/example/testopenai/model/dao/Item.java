@@ -16,6 +16,7 @@ public class Item {
     private String name;
     private Double price;
 
-    @OneToOne()
+    @ManyToOne
+    @JoinColumn(name="supplier_id")
     private Supplier supplier;
 }

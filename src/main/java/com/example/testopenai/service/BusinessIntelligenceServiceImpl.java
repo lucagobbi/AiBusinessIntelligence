@@ -179,6 +179,7 @@ public class BusinessIntelligenceServiceImpl implements BusinessIntelligenceServ
             }
         }
 
+        itemRepository.saveAll(items);
 
         for(int i = 0; i < 100; i++) {
 

@@ -2,6 +2,8 @@ package com.example.testopenai.model.dao;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +16,12 @@ public class ItemPurchaseId implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
-    @Column(name = "item_id")
-    private long itemId;
+    @ManyToOne
+    @JoinColumn(name = "purchase_id")
+    private Purchase purchase;
 
-    @Column(name = "purchase_id")
-    private long purchaseId;
-
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
 
 }

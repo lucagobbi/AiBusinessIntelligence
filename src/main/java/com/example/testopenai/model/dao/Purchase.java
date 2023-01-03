@@ -16,13 +16,6 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "purchase")
-    private List<ItemPurchase> itemPurchases;
-
     private Date creationDate;
-
-    @ManyToOne
-    @JoinColumn(name = "supplier_id")
-    private Supplier supplier;
 
 }

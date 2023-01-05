@@ -20,7 +20,7 @@ public class BusinessIntelligenceController {
     BusinessIntelligenceServiceImpl service;
 
     @PostMapping("/query-raw")
-    public ResponseEntity<CustomResponse> queryRaw(@RequestBody OpenAiRequest openAiRequest) throws IOException {
+    public ResponseEntity<CustomResponse> queryRaw(@RequestBody OpenAiRequest openAiRequest) throws Exception {
         log.info("Inizio chiamata queryRaw - query: " + openAiRequest.getPrompt());
         CustomResponse customResponse = service.getResultSetFromSqlStatement(openAiRequest);
         log.info("Fine chiamata queryRaw");

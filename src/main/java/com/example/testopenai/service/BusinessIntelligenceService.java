@@ -7,6 +7,6 @@ import java.io.IOException;
 
 public interface BusinessIntelligenceService {
 
-    public CustomResponse getResultSetFromSqlStatement(OpenAiRequest openAiRequest) throws IOException;
+    public CustomResponse getResultSetFromSqlStatement(OpenAiRequest openAiRequest) throws Exception;
 
 }
